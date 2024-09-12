@@ -3,6 +3,7 @@ from telethon import events, Button
 from data.banners import get_active_banners
 from data.characters import characters
 from storage.user_data import get_user_data, add_character_to_user, spend_currency
+from main import bot  # Import the bot instance from main.py
 
 # Define rarity tiers for characters and items
 character_rarity = {

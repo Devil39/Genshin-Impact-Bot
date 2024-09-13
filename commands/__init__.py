@@ -3,3 +3,4 @@ __all__ = [
     'add_resource', 'character_spin', 'level_up', 'travel',
     'currency', 'event'
 ]
+

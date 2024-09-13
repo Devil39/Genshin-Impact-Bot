@@ -86,7 +86,7 @@ characters = {
         'abilities': {
             'normal_attack': {'name': 'Divine Marksmanship'},
             'elemental_skill': {'name': 'Skyward Sonnet'},
-            'elemental_burst': {'name': 'Wind's Grand Ode'}
+            'elemental_burst': {'name': "Wind's Grand Ode"}
         }
     }
     # Add other Mondstadt characters similarly...

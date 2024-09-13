@@ -1,6 +1,7 @@
 from telethon import events, Button
 from storage.user_data import get_user_data
 from data.characters import characters
+from config import bot
 
 @bot.on(events.NewMessage(pattern='/my_characters'))
 async def my_characters(event):

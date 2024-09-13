@@ -1,3 +1,4 @@
+import random
 from telethon import events, Button
 from storage.user_data import get_user_data, update_user_data
 from data.characters import characters

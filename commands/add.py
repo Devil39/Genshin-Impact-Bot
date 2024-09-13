@@ -2,6 +2,7 @@ from telethon import events
 from storage.user_data import get_user_data, update_user_data
 from data.resources import resources
 from data.currencies import currencies
+from config import bot
 
 @bot.on(events.NewMessage(pattern=r'/add (resource|currency) (\w+) (\d+)'))
 async def add(event):

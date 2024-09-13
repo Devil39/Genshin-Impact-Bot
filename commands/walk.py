@@ -6,6 +6,7 @@ from data.resources import resources
 from data.regions import regions
 from data.characters import characters
 from PIL import Image
+from config import bot
 
 @bot.on(events.NewMessage(pattern='/walk'))
 async def walk(event):

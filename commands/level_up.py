@@ -2,6 +2,7 @@ from telethon import events, Button
 from storage.user_data import get_user_data, update_user_data
 from data.characters import characters
 from data.resources import resources
+from config import bot
 
 @bot.on(events.NewMessage(pattern='/level_up'))
 async def show_characters(event):

@@ -1,5 +1,6 @@
 user_data = {}
 
+# Initialize new user data with default values
 def initialize_user(user_id):
     user_data[user_id] = {
         'character': None,
@@ -7,88 +8,99 @@ def initialize_user(user_id):
         'xp': 0,
         'resources': {},
         'currencies': {
-            'primogem': 0,
-            'mora': 0,
+            'primogem': 100,  # Starting with 100 Primogems
+            'mora': 5000,
             'acquaint_fate': 0,
             'intertwined_fate': 0,
             'genesis_crystal': 0
         },
-        'characters': [],
+        'characters': {},
         'region': 'mondstadt'
     }
 
+# Retrieve the user data by their user ID
 def get_user_data(user_id):
     return user_data.get(user_id, None)
 
+# Update the user data after any changes
 def update_user_data(user_id, data):
     user_data[user_id] = data
 
-def add_currency_to_user(user_id, currency, amount):
+# Add XP to a specific character and handle leveling up
+def add_xp_to_character(user_id, character_name, xp):
     user = get_user_data(user_id)
-    if not user:
+    if not user or character_name not in user['characters']:
         return False
 
-    if currency in user['currencies']:
-        user['currencies'][currency] += amount
-    else:
-        user['currencies'][currency] = amount
+    character = user['characters'][character_name]
+    character['xp'] += xp
+    while character['xp'] >= character['level'] * 100:
+        character['xp'] -= character['level'] * 100
+        character['level'] += 1
     update_user_data(user_id, user)
     return True
 
-def spend_currency(user_id, currency, amount):
+# Function to level up the character
+def level_up(user_id, character_name):
+    user = get_user_data(user_id)
+    if not user or character_name not in user['characters']:
+        return False
+
+    character = user['characters'][character_name]
+    character['level'] += 1
+    character['xp'] = 0  # Reset XP after leveling up
+    update_user_data(user_id, user)
+    print(f"{character_name} has leveled up to level {character['level']}!")
+    return True
+
+# Add a new character to the user's account
+def add_character_to_user(user_id, character_name):
     user = get_user_data(user_id)
     if not user:
         return False
 
-    if currency in user['currencies'] and user['currencies'][currency] >= amount:
-        user['currencies'][currency] -= amount
+    if character_name not in user['characters']:
+        user['characters'][character_name] = {
+            'level': 1,
+            'xp': 0
+        }
+        update_user_data(user_id, user)
+    return True
+
+# Add resources to the user's account
+def add_resource_to_user(user_id, resource_name, amount):
+    user = get_user_data(user_id)
+    if not user:
+        return False
+
+    if resource_name not in user['resources']:
+        user['resources'][resource_name] = 0
+
+    user['resources'][resource_name] += amount
+    update_user_data(user_id, user)
+    return True
+
+# Spend a specified amount of currency
+def spend_currency(user_id, currency_name, amount):
+    user = get_user_data(user_id)
+    if not user:
+        return False
+
+    if user['currencies'].get(currency_name, 0) >= amount:
+        user['currencies'][currency_name] -= amount
         update_user_data(user_id, user)
         return True
     return False
 
-def add_resource_to_user(user_id, resource, amount):
+# Add currency to the user's account
+def add_currency_to_user(user_id, currency_name, amount):
     user = get_user_data(user_id)
     if not user:
         return False
 
-    if resource in user['resources']:
-        user['resources'][resource] += amount
-    else:
-        user['resources'][resource] = amount
+    if currency_name not in user['currencies']:
+        user['currencies'][currency_name] = 0
+
+    user['currencies'][currency_name] += amount
     update_user_data(user_id, user)
     return True
-
-def add_character_to_user(user_id, character):
-    user = get_user_data(user_id)
-    if not user:
-        return False
-
-    if 'characters' not in user:
-        user['characters'] = []
-
-    if character not in user['characters']:
-        user['characters'].append(character)
-    
-    update_user_data(user_id, user)
-    return True
-
-def add_xp_to_user(user_id, xp):
-    user = get_user_data(user_id)
-    if not user:
-        return False
-
-    user['xp'] += xp
-    while user['xp'] >= user['level'] * 100:  # Example XP requirement
-        user['xp'] -= user['level'] * 100
-        user['level'] += 1
-        check_level_rewards(user_id)
-    update_user_data(user_id, user)
-    return True
-
-def check_level_rewards(user_id):
-    user = get_user_data(user_id)
-    if user['level'] == 5 and 'amber' not in user['characters']:
-        user['characters'].append('amber')
-        update_user_data(user_id, user)
-        return True
-    return False

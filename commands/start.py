@@ -6,10 +6,20 @@ from storage.user_data import (
 )
 from config import bot
 
-# Sample character data with image URLs
-character_images = {
-    'traveler_anemo': 'images/characters/traveler_anemo.jpg',  # Replace with actual URL or local file path
-    'traveler_geo': 'images/characters/traveler_geo.jpg'       # Replace with actual URL or local file path
+# Sample character data with image URLs and info
+character_data = {
+    'lumine': {
+        'name': 'Lumine',
+        'element': 'Anemo/Geo',
+        'story': 'Lumine, the female traveler, is on a journey to find her brother.',
+        'image': 'images/characters/lumine.jpg'  # Replace with actual image path
+    },
+    'aether': {
+        'name': 'Aether',
+        'element': 'Anemo/Geo',
+        'story': 'Aether, the male traveler, is on a journey to find his sister.',
+        'image': 'images/characters/aether.jpg'  # Replace with actual image path
+    }
 }
 
 # Function to check if the chat is private
@@ -31,68 +41,71 @@ async def start(event):
     initialize_user(user_id)  # Initialize user if not present
     user_data = get_user_data(user_id)
 
-    # If the user doesn't have a character, ask them to choose one
+    # If the user doesn't have a character, show Lumine first
     if not user_data['character']:
-        await event.respond(
-            "Welcome to Genshin Bot! Choose your starting character:",
-            buttons=[
-                [Button.inline("Traveler (Anemo)", data="character_traveler_anemo")],
-                [Button.inline("Traveler (Geo)", data="character_traveler_geo")]
-            ]
+        await bot.send_file(
+            event.sender_id,
+            character_data['lumine']['image'],
+            caption=f"Character: {character_data['lumine']['name']}\nElement: {character_data['lumine']['element']}\nStory: {character_data['lumine']['story']}",
+            buttons=[Button.inline("Next", data="next_character"), Button.inline("Select", data="select_lumine")]
         )
     else:
         await event.respond("You have already started your journey with Genshin Bot!")
 
-@bot.on(events.CallbackQuery(data=b"character_traveler_anemo"))
-async def choose_traveler_anemo(event):
-    # Check if the callback is from a private chat
-    if not is_private_chat(event):
-        await event.answer("Please interact with me in private messages.", alert=True)
-        return
-
+@bot.on(events.CallbackQuery(data=b"next_character"))
+async def show_aether(event):
     user_id = str(event.sender_id)
     user_data = get_user_data(user_id)
 
     if not user_data['character']:
-        # Set traveler character for the user
-        user_data['character'] = 'traveler_anemo'
-        user_data['characters'] = ['traveler_anemo']
+        # Show Aether after Lumine
+        await bot.send_file(
+            event.sender_id,
+            character_data['aether']['image'],
+            caption=f"Character: {character_data['aether']['name']}\nElement: {character_data['aether']['element']}\nStory: {character_data['aether']['story']}",
+            buttons=[Button.inline("Select", data="select_aether")]
+        )
+
+@bot.on(events.CallbackQuery(data=b"select_lumine"))
+async def choose_lumine(event):
+    user_id = str(event.sender_id)
+    user_data = get_user_data(user_id)
+
+    if not user_data['character']:
+        # Set Lumine as the selected character
+        user_data['character'] = 'lumine'
+        user_data['characters'] = ['lumine']
         user_data['region'] = 'mondstadt'
         user_data['unlocked_places'] = ['City of Mondstadt']
         update_user_data(user_id, user_data)
 
-        # Send image of Traveler (Anemo)
+        # Show Lumine's image and info
         await bot.send_file(
             event.sender_id,
-            character_images['traveler_anemo'],
-            caption="You have chosen Traveler (Anemo) and started your journey!"
+            character_data['lumine']['image'],
+            caption=f"You have chosen {character_data['lumine']['name']}!\n\nElement: {character_data['lumine']['element']}\nStory: {character_data['lumine']['story']}"
         )
     else:
         await event.respond("You have already chosen your starting character.")
 
-@bot.on(events.CallbackQuery(data=b"character_traveler_geo"))
-async def choose_traveler_geo(event):
-    # Check if the callback is from a private chat
-    if not is_private_chat(event):
-        await event.answer("Please interact with me in private messages.", alert=True)
-        return
-
+@bot.on(events.CallbackQuery(data=b"select_aether"))
+async def choose_aether(event):
     user_id = str(event.sender_id)
     user_data = get_user_data(user_id)
 
     if not user_data['character']:
-        # Set traveler character for the user
-        user_data['character'] = 'traveler_geo'
-        user_data['characters'] = ['traveler_geo']
+        # Set Aether as the selected character
+        user_data['character'] = 'aether'
+        user_data['characters'] = ['aether']
         user_data['region'] = 'mondstadt'
         user_data['unlocked_places'] = ['City of Mondstadt']
         update_user_data(user_id, user_data)
 
-        # Send image of Traveler (Geo)
+        # Show Aether's image and info
         await bot.send_file(
             event.sender_id,
-            character_images['traveler_geo'],
-            caption="You have chosen Traveler (Geo) and started your journey!"
+            character_data['aether']['image'],
+            caption=f"You have chosen {character_data['aether']['name']}!\n\nElement: {character_data['aether']['element']}\nStory: {character_data['aether']['story']}"
         )
     else:
         await event.respond("You have already chosen your starting character.")

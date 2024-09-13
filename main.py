@@ -4,10 +4,11 @@ from config  import bot
 bot = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
 # Import commands
-from commands.start import start, choose_traveler_anemo, choose_traveler_geo
+from commands.start import start, show_aether, choose_lumine, choose_aether
 from commands.help import help
-from commands.character import character, my_character, assign_slot, setup_team, select_team_character
+from commands.character import  my_character
 from commands.weapon import  weapon, select_weapon_type, weapon_detail, select_weapon, assign_weapon
+from commands.setup_team  import setup_team, assign_slot, add_to_team, select_team_character
 from commands.battle import encounter_monster, fight_monster, execute_attack
 from commands.wish import wish, show_wish_options, perform_single_wish, perform_ten_wish, show_banner_details
 from commands.add import add
@@ -24,7 +25,7 @@ from commands.banner import add_banner_command, activate_banner_command, deactiv
 # Register command handlers
 bot.add_event_handler(start, events.NewMessage(pattern='/start'))
 bot.add_event_handler(help, events.NewMessage(pattern='/help'))
-bot.add_event_handler(character, events.NewMessage(pattern='/character'))
+bot.add_event_handler(my_character, events.NewMessage(pattern='/character'))
 bot.add_event_handler(my_character, events.NewMessage(pattern='/my_characters'))
 bot.add_event_handler(assign_slot, events.NewMessage(pattern='/assign_slot (.+)'))
 bot.add_event_handler(setup_team, events.NewMessage(pattern='/setup_team'))
@@ -67,6 +68,10 @@ bot.add_event_handler(add_banner_command, events.NewMessage(pattern='/add_banner
 bot.add_event_handler(activate_banner_command, events.NewMessage(pattern='/activate_banner'))
 bot.add_event_handler(deactivate_banner_command, events.NewMessage(pattern='/deactivate_banner'))
 bot.add_event_handler(list_banners, events.NewMessage(pattern='/banners'))
+# Register callback query handlers for character selection
+bot.add_event_handler(show_aether, events.CallbackQuery(data=b"next_character"))
+bot.add_event_handler(choose_lumine, events.CallbackQuery(data=b"select_lumine"))
+bot.add_event_handler(choose_aether, events.CallbackQuery(data=b"select_aether"))
 
 def main():
     bot.run_until_disconnected()
